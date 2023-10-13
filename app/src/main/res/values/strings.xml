@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ClipType</string>
+    <string name="usb_qs_label">Type via USB</string>
+    <string name="usb_qs_desc_default">Send clipboard contents</string>
+    <string name="usb_qs_desc_service_dead">Starting root service…</string>
+    <string name="usb_qs_desc_hid_unavailable">HID emulation unavailable</string>
+</resources>
