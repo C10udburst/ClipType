@@ -5,7 +5,8 @@
     <uses-permission
         android:name="android.permission.READ_CLIPBOARD_IN_BACKGROUND"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.INTERNAL_SYSTEM_WINDOW"
+    <uses-permission
+        android:name="android.permission.INTERNAL_SYSTEM_WINDOW"
         tools:ignore="ProtectedPermissions" />
 
     <application
@@ -16,8 +17,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light"
+        android:theme="@style/Theme.AppCompat.DayNight.Dialog"
         tools:targetApi="31">
+        <activity
+            android:name=".WorkingActivity"
+            android:exported="false" />
+
         <service
             android:name=".UsbQSService"
             android:enabled="true"

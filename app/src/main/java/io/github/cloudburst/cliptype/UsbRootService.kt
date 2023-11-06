@@ -32,6 +32,7 @@ class UsbRootService: RootService() {
             val hidDev = FileOutputStream(hidFile, true)
             for (c in text) {
                 hidDev.write(kbdMap.getScancode(c))
+                Thread.sleep(10)
                 hidDev.write(kbdMap.getScancode(null))
                 hidDev.flush()
 
@@ -43,11 +44,14 @@ class UsbRootService: RootService() {
 
     class Connection: ServiceConnection {
 
+        var onConnected: ((Connection) -> Unit)? = null
+
         var binder: IUsbRootService? = null
             private set
 
         override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
             binder = IUsbRootService.Stub.asInterface(p1)
+            onConnected?.invoke(this)
         }
 
         override fun onServiceDisconnected(p0: ComponentName?) {
