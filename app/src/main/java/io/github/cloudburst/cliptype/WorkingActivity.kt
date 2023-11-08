@@ -1,15 +1,13 @@
 package io.github.cloudburst.cliptype
 
+import android.app.Activity
 import android.content.ClipboardManager
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.TextView
 import com.topjohnwu.superuser.ipc.RootService
 
-import kotlinx.android.synthetic.main.activity_working.*
-
-class WorkingActivity : AppCompatActivity() {
-
+class WorkingActivity : Activity() {
     private var connection: UsbRootService.Connection? = null
 
     private var clipboardContents: CharSequence = ""
@@ -29,7 +27,7 @@ class WorkingActivity : AppCompatActivity() {
     private fun onConnected(connection: UsbRootService.Connection) {
         val binder = connection.binder ?: return finish()
         if (!binder.hidCapable()) {
-            statusTextView.text = getString(R.string.usb_qs_desc_hid_unavailable)
+            findViewById<TextView>(R.id.statusTextView).text = getString(R.string.usb_qs_desc_hid_unavailable)
         } else {
             binder.typeUsb(clipboardContents.toString())
             finish()
