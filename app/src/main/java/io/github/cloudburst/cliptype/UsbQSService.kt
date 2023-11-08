@@ -1,11 +1,9 @@
 package io.github.cloudburst.cliptype
 
 import android.app.PendingIntent
-import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Build.VERSION
 import android.service.quicksettings.TileService
-import com.topjohnwu.superuser.ipc.RootService
 
 class UsbQSService : TileService() {
 
