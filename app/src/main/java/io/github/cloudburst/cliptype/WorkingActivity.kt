@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
+import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.ipc.RootService
 
 class WorkingActivity : Activity() {
@@ -14,7 +16,10 @@ class WorkingActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_working)
+    }
 
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        if (!hasFocus) finish();
         val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         clipboardContents = clipboard.primaryClip?.getItemAt(0)?.text ?: return finish()
 
@@ -23,6 +28,7 @@ class WorkingActivity : Activity() {
         val intent = Intent(this, UsbRootService::class.java)
         RootService.bind(intent, connection!!)
     }
+
 
     private fun onConnected(connection: UsbRootService.Connection) {
         val binder = connection.binder ?: return finish()
