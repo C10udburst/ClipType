@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="WorkingDialog" parent="@android:style/Theme.Material.Dialog">
+        <item name="android:dialogCornerRadius">16dp</item>
+        <item name="android:background">@android:color/system_neutral1_900</item>
+        <item name="android:color">@android:color/system_neutral1_10</item>
+    </style>
+</resources>

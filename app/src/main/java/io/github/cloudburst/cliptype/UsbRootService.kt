@@ -10,26 +10,63 @@ import java.io.File
 import java.io.FileOutputStream
 
 val TAG = "UsbRootService"
+const val HID_KEYBOARD_GADGET = "/config/usb_gadget/keyboard"
 
 class UsbRootService: RootService() {
 
     class Interface: IUsbRootService.Stub() {
-        override fun hidCapable(): Boolean {
-            // find /dev/hidg*
-            // return true if found
-            val devFolder = File("/dev")
-            val hidgFiles = devFolder.listFiles { file -> file.name.startsWith("hidg") } ?: return false
-            return hidgFiles.isNotEmpty()
+        override fun devPath(): String? {
+            return File("/dev/").listFiles { _, s -> s.startsWith("hidg") }?.lastOrNull()?.path
+        }
+
+        override fun canWrite(): Boolean {
+            try {
+                val hidPath = devPath() ?: return false
+                val hidDev = FileOutputStream(hidPath, true)
+                hidDev.write(byteArrayOf(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00))
+                hidDev.flush()
+                hidDev.close()
+                return true
+            } catch (e: Exception) {
+                return false
+            }
+        }
+
+        override fun gadgetExists(): Boolean {
+            val hidGadget = File(HID_KEYBOARD_GADGET)
+            return hidGadget.exists() && hidGadget.listFiles()?.isNotEmpty() == true
+        }
+
+        override fun enabledGadgets(): MutableList<String> {
+            val gadgets = File("/config/usb_gadget").listFiles {
+                file -> file.isDirectory
+            } ?: return mutableListOf()
+            return gadgets.filter { file ->
+                try {
+                    val udc = file.listFiles { f -> f.name == "UDC" }?.firstOrNull()
+                        ?: return@filter false
+                    if (!udc.isFile || !udc.canRead() || udc.length() == 0L) return@filter false
+                    val text = udc.readText()
+                    if (text.trim().isBlank()) return@filter false
+                    if (text.trim() == "not set") return@filter false
+                    return@filter true
+                } catch (e: Exception) {
+                    return@filter false
+                }
+            }.map { file -> file.path }.toMutableList()
         }
 
         override fun typeUsb(text: String) {
             Log.d(TAG, "Will type: $text")
 
-            val devFolder = File("/dev/")
-            val hidFile = devFolder.listFiles { file -> file.name.startsWith("hidg") }?.last() ?: return
+            val hidPath = devPath()
+            if (hidPath == null) {
+                Log.e(TAG, "HID device not found")
+                return
+            }
 
             val kbdMap = UsbKbdMap()
-            val hidDev = FileOutputStream(hidFile, true)
+            val hidDev = FileOutputStream(hidPath, true)
             for (c in text) {
                 hidDev.write(kbdMap.getScancode(c))
                 Thread.sleep(10)

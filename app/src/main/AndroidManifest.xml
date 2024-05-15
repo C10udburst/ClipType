@@ -26,7 +26,7 @@
             android:finishOnCloseSystemDialogs="true"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
-            android:theme="@android:style/Theme.Material.Dialog"
+            android:theme="@style/WorkingDialog"
             android:exported="false" />
 
         <service
